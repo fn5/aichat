@@ -77,6 +77,11 @@ impl MarkdownRender {
     pub fn render_line(&self, line: &str) -> String {
         let (_, code_syntax, is_code) = self.check_line(line);
         if is_code {
+            if let Some(lang) = detect_code_block(line) {
+                if lang == "mermaid" {
+                    return render_mermaid_chart(line);
+                }
+            }
             self.highlight_code_line(line, &code_syntax)
         } else {
             self.highlight_line(line, &self.md_syntax, false)
@@ -86,6 +91,11 @@ impl MarkdownRender {
     fn render_line_mut(&mut self, line: &str) -> String {
         let (line_type, code_syntax, is_code) = self.check_line(line);
         let output = if is_code {
+            if let Some(lang) = detect_code_block(line) {
+                if lang == "mermaid" {
+                    return render_mermaid_chart(line);
+                }
+            }
             self.highlight_code_line(line, &code_syntax)
         } else {
             self.highlight_line(line, &self.md_syntax, false)
@@ -301,6 +311,12 @@ fn get_code_color(theme: &Theme, truecolor: bool) -> Color {
     scope
         .and_then(|v| v.style.foreground)
         .map_or_else(|| Color::Yellow, |c| convert_color(c, truecolor))
+}
+
+fn render_mermaid_chart(chart: &str) -> String {
+    // Placeholder function to render mermaid chart
+    // In a real implementation, this function would convert the mermaid chart to a suitable format for terminal display
+    format!("Rendered Mermaid Chart: {}", chart)
 }
 
 #[cfg(test)]

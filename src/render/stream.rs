@@ -45,7 +45,7 @@ pub async fn raw_stream(mut rx: UnboundedReceiver<SseEvent>, abort: &AbortSignal
                     print!("{}", text);
                     stdout().flush()?;
                 }
-                SseEvent::Done => {
+se                SseEvent::Done => {
                     break;
                 }
             }
@@ -136,6 +136,11 @@ async fn markdown_stream_inner(
                     writer.flush()?;
                 }
                 SseEvent::Done => {
+                    // Render mermaid charts after the response is completely received
+                    if buffer.contains("```mermaid") {
+                        let output = render.render(&buffer);
+                        print_block(writer, &output, columns)?;
+                    }
                     break 'outer;
                 }
             }

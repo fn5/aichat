@@ -95,6 +95,7 @@ where
     F: FnMut(SseMmessage) -> Result<bool>,
 {
     let mut es = builder.eventsource()?;
+    let mut buffer = String::new(); // P3dda
     while let Some(event) = es.next().await {
         match event {
             Ok(Event::Open) => {}
@@ -103,6 +104,7 @@ where
                     event: message.event,
                     data: message.data,
                 };
+                buffer.push_str(&message.data); // P3dda
                 if handle(message)? {
                     break;
                 }
@@ -137,6 +139,13 @@ where
                 es.close();
             }
         }
+    }
+    // P3dda
+    if buffer.contains("```mermaid") {
+        handle(SseMmessage {
+            event: "mermaid".to_string(),
+            data: buffer,
+        })?;
     }
     Ok(())
 }

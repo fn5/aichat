@@ -22,7 +22,7 @@ pub async fn render_stream(
     } else {
         raw_stream(rx, &abort).await
     };
-    ret.map_err(|err| err.context("Failed to reader stream"))
+    ret.map_err(|err| err.context("Failed to render stream"))
 }
 
 pub fn render_error(err: anyhow::Error) {
