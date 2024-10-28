@@ -45,7 +45,7 @@ pub async fn raw_stream(mut rx: UnboundedReceiver<SseEvent>, abort: &AbortSignal
                     print!("{}", text);
                     stdout().flush()?;
                 }
-se                SseEvent::Done => {
+                SseEvent::Done => {
                     break;
                 }
             }
